@@ -1,3 +1,7 @@
+import CheckBox from './components/atoms/checkbox'
+import Title from './components/atoms/title'
+import SelectBox from './components/molecules/selectbox'
+import Header from './components/organisms/header'
 import './globals.css'
 
 export const metadata = {
@@ -12,7 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   )
 }

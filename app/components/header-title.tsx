@@ -1,3 +1,5 @@
+// ヘッダータイトル用コンポーネント
+
 export default function HeaderTitle() {
   return (
     <div>

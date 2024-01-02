@@ -1,0 +1,26 @@
+.selectArea {
+  background-color: yellow;
+  width: 80%;
+  margin: 2rem auto 8rem;
+}
+
+.prefectureItem {
+  cursor: pointer;
+}
+
+.graphArea {
+  width: 80%;
+  margin: 2rem auto;
+}
+
+.selectAreaList {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.selectAreaItem {
+  width: 20%;
+  margin-top: 0px;
+}

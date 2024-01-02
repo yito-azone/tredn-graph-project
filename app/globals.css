@@ -1,0 +1,29 @@
+body {
+  width: 95%;
+  height: 100vh;
+  margin: 0 auto ;
+  text-align: center;
+  border: 1px solid #0390fc
+}
+
+
+/* タイトル */
+.titleLg {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.titleMd {
+  font-size: 1.6rem;
+}
+
+.titleSm {
+  font-size: 1.2rem;
+}
+
+/* チェックボタン */
+.checkBox {
+  transform: scale(1.5);
+  margin-right: 0.5rem;
+  pointer-events: none;;
+}
