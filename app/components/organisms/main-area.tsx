@@ -73,6 +73,7 @@ export default function MainArea() {
           // グラフ表示用のオプション更新
           const newOptions = options;
           if (newOptions) {
+            newOptions.title!.text = replaceGraphTitle(graphType);
             newOptions.series = newSeries;
           }
           setOptions(newOptions);
@@ -107,7 +108,6 @@ export default function MainArea() {
 
   // 表示グラフの種別変更
   const onChangeGraphType = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('$$$$$$$$$$$$$')
     // 既存グラフオプションを削除
     const newOptions = options;
     newOptions.series = []
