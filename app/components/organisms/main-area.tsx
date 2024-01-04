@@ -14,6 +14,7 @@ import { Prefecture, GraphValue } from '@/app/type/resas-api-type';
 
 import * as Highcharts from 'highcharts';
 import { graphTypes, initOption, replaceGraphTitle } from '@/app/utils/graph-options';
+import SelectType from '../atoms/select-type';
 
 export default function MainArea() {
   const router = useRouter();
@@ -26,7 +27,8 @@ export default function MainArea() {
   const [graphValue, setGraphValue] = useState<GraphValue[]>([]);
   const [series, setSeries] = useState<Highcharts.SeriesOptionsType[]>([]);
 
-
+  // 初期描画からグラフを外す
+  const [isCheckedPrefecture, setIsCheckedPrefecture] = useState(false);
 
   // チェックボックスがクリックされた際に都道府県の引数に渡された種類のグラフ表示のための値を取得
   const onClickCheckBox = (prefecture: Prefecture, graphType: string) => {
@@ -74,6 +76,11 @@ export default function MainArea() {
             newOptions.series = newSeries;
           }
           setOptions(newOptions);
+
+          // グラフ表示
+          if (!isCheckedPrefecture) {
+            setIsCheckedPrefecture(true);
+          }
           router.refresh();
         })
     } else {
@@ -100,6 +107,7 @@ export default function MainArea() {
 
   // 表示グラフの種別変更
   const onChangeGraphType = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log('$$$$$$$$$$$$$')
     // 既存グラフオプションを削除
     const newOptions = options;
     newOptions.series = []
@@ -146,6 +154,7 @@ export default function MainArea() {
     <>
       <section className={styles.selectArea}>
         <PrefecturesTitleArea />
+        <SelectType onChange={(e) => onChangeGraphType(e)} />
         <ul className={styles.selectAreaList}>
           {prefectures.length > 0 && prefectures.map((prefecture) => (
             <li key={prefecture.prefCode}
@@ -158,19 +167,7 @@ export default function MainArea() {
         </ul>
       </section>
       <section className={styles.graphArea}>
-        <select
-          onChange={onChangeGraphType}
-        >
-          {graphTypes.map(graphType => (
-            <option
-              key={graphType.type}
-              value={graphType.type}
-            >
-              {graphType.name}
-            </option>
-          ))}
-        </select>
-        <MainGraphArea options={options} />
+        {isCheckedPrefecture && <MainGraphArea options={options} />}
       </section>
     </>
   )

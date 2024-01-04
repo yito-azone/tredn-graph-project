@@ -1,8 +1,7 @@
 body {
-  width: 95%;
   margin: 0 auto ;
   text-align: center;
-  border: 1px solid #0390fc
+  /* border: 1px solid #0390fc */
 }
 
 
@@ -24,5 +23,5 @@ body {
 .checkBox {
   transform: scale(1.5);
   margin-right: 0.5rem;
-  pointer-events: none;;
+  /* pointer-events: none; */
 }
