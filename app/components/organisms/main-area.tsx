@@ -4,43 +4,37 @@
 
 import styles from './main-area.module.css'
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation';
 import SelectBox from "../molecules/selectbox";
 import axios from "axios";
 import PrefecturesTitleArea from '../molecules/prefectures-title-area';
 import MainGraphArea from './main-graph-area';
-import { GraphValue } from '@/app/type/resas-api-type';
+import { Prefecture, GraphValue } from '@/app/type/resas-api-type';
 
-type Prefecture = {
-  prefCode: number;
-  prefName: string;
-  checked: boolean;
-  graphValue?: any;
-}
-
-type GraphType = 'population' | 'newAgeCount' | 'middleAgeCount' | 'oldAgeCount';
+import * as Highcharts from 'highcharts';
+import { graphTypes, initOption, replaceGraphTitle } from '@/app/utils/graph-options';
 
 export default function MainArea() {
   const router = useRouter();
   // 都道府県の一覧を格納
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
   // 選択されたグラフ種別を格納
-  const [graphType, setGraphType] = useState<GraphType>('population');
+  const [graphType, setGraphType] = useState<string>('population');
   // グラフ表示用の値を格納
+  const [options, setOptions] = useState<Highcharts.Options>(initOption);
   const [graphValue, setGraphValue] = useState<GraphValue[]>([]);
-
-  // 
+  const [series, setSeries] = useState<Highcharts.SeriesOptionsType[]>([]);
 
 
 
   // チェックボックスがクリックされた際に都道府県の引数に渡された種類のグラフ表示のための値を取得
-  const onClickCheckBox = (prefecture: Prefecture, graphType: GraphType) => {
+  const onClickCheckBox = (prefecture: Prefecture, graphType: string) => {
+
     // useState内のchecked状態を更新
     const newPrefectures: Prefecture[] = prefectures;
     const index = newPrefectures.findIndex(item => item.prefName === prefecture.prefName)
     newPrefectures[index].checked = !newPrefectures[index].checked;
-    console.log(newPrefectures);
     setPrefectures(newPrefectures);
 
     // チェックボックスに入力した値がtrueならグラフ用データを追加、falseなら削除
@@ -52,23 +46,84 @@ export default function MainArea() {
         }
       })
         .then((res) => {
-          const value: GraphValue[] = graphValue;
-          const result: GraphValue = res.data.result.data;
-          result.prefCode = prefecture.prefCode;
-          value.push(result);
-          console.log(value);
-          setGraphValue(value)
+          const values: GraphValue[] = graphValue;
+          const result: GraphValue = {
+            prefCode: prefecture.prefCode,
+            prefName: prefecture.prefName,
+            data: res.data.result.data
+          }
+          values.push(result);
+          setGraphValue(values)
+
+          const newSeries = series;
+          const seriesNumber: number[] = []
+          result.data.find((val) => val.label === replaceGraphTitle(graphType))!.data.map(item => seriesNumber.push(item.value))
+
+          const item: Highcharts.SeriesOptionsType = {
+            type: 'line',
+            name: prefecture.prefName,
+            data: seriesNumber
+          }
+
+          newSeries.push(item);
+          setSeries(newSeries);
+
+          // グラフ表示用のオプション更新
+          const newOptions = options;
+          if (newOptions) {
+            newOptions.series = newSeries;
+          }
+          setOptions(newOptions);
+          router.refresh();
         })
     } else {
+      // 指定された都道府県のデータをグラフから削除
       const value: GraphValue[] = graphValue;
       const index = value.findIndex(item => item.prefCode === prefecture.prefCode)
       value.splice(index, 1);
-      console.log(value);
       setGraphValue(value)
+
+      // グラフ表示用のオプション更新
+      const newSeries = series;
+      const seriesIndex = series.findIndex(item => item.name === prefecture.prefName)
+      newSeries.splice(seriesIndex, 1);
+      setSeries(newSeries);
+
+      const newOptions = options;
+      // const optionIndex = newOptions.series?.findIndex(item => item.name === prefecture.prefName)
+      // newOptions.series?.splice(optionIndex!, 1);
+      newOptions.series = newSeries;
+      setOptions(newOptions);
+      router.refresh();
     }
+  }
+
+  // 表示グラフの種別変更
+  const onChangeGraphType = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // 既存グラフオプションを削除
+    const newOptions = options;
+    newOptions.series = []
+
+    // 選択された種別のオプションで書き換え
+    graphValue.map(value => {
+      const seriesNumber: number[] = []
+      value.data.find((val) => val.label === replaceGraphTitle(e.target.value))!.data.map(item => seriesNumber.push(item.value))
+      newOptions.title!.text = replaceGraphTitle(e.target.value);
+      newOptions.series!.push({
+        type: 'line',
+        name: value.prefName,
+        data: seriesNumber
+      })
+    })
+    setOptions(newOptions);
+
+    // グラフ種別をステートに保存
+    setGraphType(e.target.value);
+
     router.refresh();
   }
 
+  // 初期描画
   useEffect(() => {
     // RESAS APIから都道府県の一覧を取得
     axios.get(`${process.env.NEXT_PUBLIC_URL}/api/v1/prefectures`, {
@@ -86,6 +141,7 @@ export default function MainArea() {
       })
       .catch((error) => { })
   }, []);
+
   return (
     <>
       <section className={styles.selectArea}>
@@ -102,7 +158,19 @@ export default function MainArea() {
         </ul>
       </section>
       <section className={styles.graphArea}>
-        <MainGraphArea graphType={graphType} graphValue={graphValue} />
+        <select
+          onChange={onChangeGraphType}
+        >
+          {graphTypes.map(graphType => (
+            <option
+              key={graphType.type}
+              value={graphType.type}
+            >
+              {graphType.name}
+            </option>
+          ))}
+        </select>
+        <MainGraphArea options={options} />
       </section>
     </>
   )

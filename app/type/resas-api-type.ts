@@ -1,15 +1,30 @@
-type GraphDetailData = {
-  year: number;
-  value: number;
+// RESAS API用の型定義
+
+export type Prefecture = {
+  prefCode: number;
+  prefName: string;
+  checked: boolean;
 };
 
-type GraphData = {
+export type GraphDetailData = {
+  year: number;
+  value: number;
+  rate?: number;
+};
+
+export type GraphData = {
   label: string;
   data: GraphDetailData[];
 };
 
 export type GraphValue = {
-  prefCode?: number;
-  boundaryYear: string;
+  prefCode: number;
+  prefName: string;
+  boundaryYear?: string;
   data: GraphData[];
+};
+
+export type Series = {
+  name: string;
+  data: number[];
 };
