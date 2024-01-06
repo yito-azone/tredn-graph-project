@@ -2,6 +2,7 @@ body {
   margin: 0 auto ;
   text-align: center;
   font-family: sans-serif;
+  color: #141414;
 }
 
 
@@ -19,9 +20,41 @@ body {
   font-size: 1.2rem;
 }
 
+/* セレクトボックス */
+.selectType {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+}
+
 /* チェックボタン */
 .checkBox {
   transform: scale(1.5);
   margin-right: 0.5rem;
   pointer-events: none;
+}
+
+/* スマホ対応 */
+@media (max-width: 430px) {
+  /* タイトル */
+.titleLg {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 0 auto;
+}
+
+.titleMd {
+  font-size: 1.2rem;
+}
+
+.titleSm {
+  font-size: 0.8rem;
+}
+
+/* チェックボタン */
+.checkBox {
+  transform: scale(1);
+  margin-right: 0.1rem;
+  pointer-events: none;
+}
 }

@@ -1,6 +1,6 @@
 .selectArea {
-  width: 80%;
-  margin: 2rem auto 4rem;
+  width: 90%;
+  margin: 1rem auto 2rem;
 }
 
 .prefectureItem {
@@ -8,7 +8,7 @@
 }
 
 .graphArea {
-  width: 80%;
+  width: 90%;
   margin: 2rem auto;
 }
 
@@ -22,4 +22,14 @@
 .selectAreaItem {
   width: 20%;
   margin-top: 0px;
+}
+
+.selectTypebox {
+  display: flex;
+  align-items: center;
+}
+
+.mainHeaderArea {
+  display: flex;
+  justify-content: space-between;
 }

@@ -13,8 +13,9 @@ import MainGraphArea from './main-graph-area';
 import { Prefecture, GraphValue } from '@/app/type/resas-api-type';
 
 import * as Highcharts from 'highcharts';
-import { graphTypes, initOption, replaceGraphTitle } from '@/app/utils/graph-options';
+import { initOption, replaceGraphTitle } from '@/app/utils/graph-options';
 import SelectType from '../atoms/select-type';
+import Title from '../atoms/title';
 
 export default function MainArea() {
   const router = useRouter();
@@ -153,8 +154,13 @@ export default function MainArea() {
   return (
     <>
       <section className={styles.selectArea}>
-        <PrefecturesTitleArea />
-        <SelectType onChange={(e) => onChangeGraphType(e)} />
+        <div className={styles.mainHeaderArea}>
+          <PrefecturesTitleArea />
+          <div className={styles.selectTypebox}>
+            <Title size="titleSm">グラフ種別：</Title>
+            <SelectType onChange={(e) => onChangeGraphType(e)} />
+          </div>
+        </div>
         <ul className={styles.selectAreaList}>
           {prefectures.length > 0 && prefectures.map((prefecture) => (
             <li key={prefecture.prefCode}
