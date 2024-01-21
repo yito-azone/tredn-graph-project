@@ -43,48 +43,47 @@ export default function MainArea() {
     // チェックボックスに入力した値がtrueならグラフ用データを追加、falseなら削除
     if (newPrefectures[index].checked) {
       // 指定された都道府県のグラフ表示用データ取得
-      axios.get(`${process.env.NEXT_PUBLIC_URL}/api/v1/population/composition/perYear?prefCode=${prefecture.prefCode}&cityCode=-`, {
-        headers: {
-          "X-API-KEY": process.env.NEXT_PUBLIC_APIKEY
+      const getSelectPrefecture = async () => {
+        const res = await fetch(`/api/select-prefecture?prefCode=${prefecture.prefCode}`)
+        const jsonData = await res.json();
+        const values: GraphValue[] = graphValue;
+        const result: GraphValue = {
+          prefCode: prefecture.prefCode,
+          prefName: prefecture.prefName,
+          data: jsonData.data.data
         }
-      })
-        .then((res) => {
-          const values: GraphValue[] = graphValue;
-          const result: GraphValue = {
-            prefCode: prefecture.prefCode,
-            prefName: prefecture.prefName,
-            data: res.data.result.data
-          }
-          values.push(result);
-          setGraphValue(values)
+        values.push(result);
+        setGraphValue(values)
 
-          const newSeries = series;
-          const seriesNumber: number[] = []
-          result.data.find((val) => val.label === replaceGraphTitle(graphType))!.data.map(item => seriesNumber.push(item.value))
+        const newSeries = series;
+        const seriesNumber: number[] = []
+        result.data.find((val) => val.label === replaceGraphTitle(graphType))!.data.map(item => seriesNumber.push(item.value))
 
-          const item: Highcharts.SeriesOptionsType = {
-            type: 'line',
-            name: prefecture.prefName,
-            data: seriesNumber
-          }
+        const item: Highcharts.SeriesOptionsType = {
+          type: 'line',
+          name: prefecture.prefName,
+          data: seriesNumber
+        }
 
-          newSeries.push(item);
-          setSeries(newSeries);
+        newSeries.push(item);
+        setSeries(newSeries);
 
-          // グラフ表示用のオプション更新
-          const newOptions = options;
-          if (newOptions) {
-            newOptions.title!.text = replaceGraphTitle(graphType);
-            newOptions.series = newSeries;
-          }
-          setOptions(newOptions);
+        // グラフ表示用のオプション更新
+        const newOptions = options;
+        if (newOptions) {
+          newOptions.title!.text = replaceGraphTitle(graphType);
+          newOptions.series = newSeries;
+        }
+        setOptions(newOptions);
 
-          // グラフ表示
-          if (!isCheckedPrefecture) {
-            setIsCheckedPrefecture(true);
-          }
-          router.refresh();
-        })
+        // グラフ表示
+        if (!isCheckedPrefecture) {
+          setIsCheckedPrefecture(true);
+        }
+        router.refresh();
+      };
+      getSelectPrefecture();
+
     } else {
       // 指定された都道府県のデータをグラフから削除
       const value: GraphValue[] = graphValue;
@@ -135,20 +134,16 @@ export default function MainArea() {
   // 初期描画
   useEffect(() => {
     // RESAS APIから都道府県の一覧を取得
-    axios.get(`${process.env.NEXT_PUBLIC_URL}/api/v1/prefectures`, {
-      headers: {
-        "X-API-KEY": process.env.NEXT_PUBLIC_APIKEY
-      }
-    })
-      .then((res) => {
-        const result = res.data.result
-        if (!result) return
-        result.map((item: Prefecture) => {
-          item.checked = false
-        })
-        setPrefectures(result)
+    const getAllPrefectures = async () => {
+      const res = await fetch('/api/prefectures');
+      const result = await res.json();
+      if (!result) return
+      result.data.map((item: Prefecture) => {
+        item.checked = false
       })
-      .catch((error) => { })
+      setPrefectures(result.data)
+    }
+    getAllPrefectures();
   }, []);
 
   return (
