@@ -43,54 +43,8 @@ export default function MainArea() {
     selectedPrefecture.checked = !selectedPrefecture.checked;
     setPrefectures(newPrefectures);
 
-    // チェックボックスに入力した値がtrueならグラフ用データを追加、falseなら削除
-    if (selectedPrefecture.checked) {
-      // 指定された都道府県のグラフ表示用データ取得
-      const getSelectPrefecture = async () => {
-        const res = await fetch(
-          `/api/select-prefecture?prefCode=${prefecture.prefCode}`
-        );
-        const jsonData = await res.json();
-        const values: GraphValue[] = graphValues;
-        const result: GraphValue = {
-          prefCode: prefecture.prefCode,
-          prefName: prefecture.prefName,
-          data: jsonData.data.data,
-        };
-        values.push(result);
-        setGraphValues(values);
-
-        const newSeries = series;
-        const seriesNumber: number[] = [];
-        result.data
-          .find((val) => val.label === replaceGraphTitle(graphType))!
-          .data.map((item) => seriesNumber.push(item.value));
-
-        const item: Highcharts.SeriesOptionsType = {
-          type: "line",
-          name: prefecture.prefName,
-          data: seriesNumber,
-        };
-
-        newSeries.push(item);
-        setSeries(newSeries);
-
-        // グラフ表示用のオプション更新
-        const newOptions = options;
-        if (newOptions) {
-          newOptions.title!.text = replaceGraphTitle(graphType);
-          newOptions.series = newSeries;
-        }
-        setOptions(newOptions);
-
-        // グラフ表示
-        if (!isCheckedPrefecture) {
-          setIsCheckedPrefecture(true);
-        }
-        router.refresh();
-      };
-      getSelectPrefecture();
-    } else {
+    // チェックボックスに入力した値がfalseなら削除
+    if (!selectedPrefecture.checked) {
       // 指定された都道府県のデータをグラフから削除
       const values: GraphValue[] = graphValues;
       const index = values.findIndex(
@@ -111,7 +65,55 @@ export default function MainArea() {
       newOptions.series = newSeries;
       setOptions(newOptions);
       router.refresh();
+      return;
     }
+
+    // チェックボックスに入力した値がtrueならグラフ用データを追加
+    // 指定された都道府県のグラフ表示用データ取得
+    const getSelectPrefecture = async () => {
+      const res = await fetch(
+        `/api/select-prefecture?prefCode=${prefecture.prefCode}`
+      );
+      const jsonData = await res.json();
+      const values: GraphValue[] = graphValues;
+      const result: GraphValue = {
+        prefCode: prefecture.prefCode,
+        prefName: prefecture.prefName,
+        data: jsonData.data.data,
+      };
+      values.push(result);
+      setGraphValues(values);
+
+      const newSeries = series;
+      const seriesNumber: number[] = [];
+      result.data
+        .find((val) => val.label === replaceGraphTitle(graphType))!
+        .data.map((item) => seriesNumber.push(item.value));
+
+      const item: Highcharts.SeriesOptionsType = {
+        type: "line",
+        name: prefecture.prefName,
+        data: seriesNumber,
+      };
+
+      newSeries.push(item);
+      setSeries(newSeries);
+
+      // グラフ表示用のオプション更新
+      const newOptions = options;
+      if (newOptions) {
+        newOptions.title!.text = replaceGraphTitle(graphType);
+        newOptions.series = newSeries;
+      }
+      setOptions(newOptions);
+
+      // グラフ表示
+      if (!isCheckedPrefecture) {
+        setIsCheckedPrefecture(true);
+      }
+      router.refresh();
+    };
+    getSelectPrefecture();
   };
 
   // 表示グラフの種別変更
