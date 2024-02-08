@@ -51,16 +51,12 @@ export default function MainArea() {
       );
 
       // グラフ表示用のオプション更新
-      const newSeries = series;
-      const seriesIndex = series.findIndex(
-        (item) => item.name === prefecture.prefName
+      const newSeries = series.filter(
+        (item) => item.name !== prefecture.prefName
       );
-      newSeries.splice(seriesIndex, 1);
       setSeries(newSeries);
 
-      const newOptions = options;
-      newOptions.series = newSeries;
-      setOptions(newOptions);
+      setOptions({ ...options, series: newSeries });
       router.refresh();
       return;
     }
