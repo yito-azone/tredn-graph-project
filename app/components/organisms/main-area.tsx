@@ -63,7 +63,7 @@ export default function MainArea() {
 
     // チェックボックスに入力した値がtrueならグラフ用データを追加
     // 指定された都道府県のグラフ表示用データ取得
-    const getSelectPrefecture = async () => {
+    const fetchSelectPrefecture = async () => {
       const res = await fetch(
         `/api/select-prefecture?prefCode=${prefecture.prefCode}`
       );
@@ -106,7 +106,7 @@ export default function MainArea() {
       }
       router.refresh();
     };
-    getSelectPrefecture();
+    fetchSelectPrefecture();
   };
 
   // 表示グラフの種別変更
