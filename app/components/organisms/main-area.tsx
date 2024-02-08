@@ -108,8 +108,6 @@ export default function MainArea() {
       setSeries(newSeries);
 
       const newOptions = options;
-      // const optionIndex = newOptions.series?.findIndex(item => item.name === prefecture.prefName)
-      // newOptions.series?.splice(optionIndex!, 1);
       newOptions.series = newSeries;
       setOptions(newOptions);
       router.refresh();
