@@ -36,14 +36,15 @@ export default function MainArea() {
     const newPrefectures: Prefecture[] = prefectures.map((prefecture) => ({
       ...prefecture,
     }));
-    const index = newPrefectures.findIndex(
+    const selectedPrefecture = newPrefectures.find(
       (item) => item.prefName === prefecture.prefName
     );
-    newPrefectures[index].checked = !newPrefectures[index].checked;
+    if (!selectedPrefecture) throw Error("都道府県が見つかりません");
+    selectedPrefecture.checked = !selectedPrefecture.checked
     setPrefectures(newPrefectures);
 
     // チェックボックスに入力した値がtrueならグラフ用データを追加、falseなら削除
-    if (newPrefectures[index].checked) {
+    if (selectedPrefecture.checked) {
       // 指定された都道府県のグラフ表示用データ取得
       const getSelectPrefecture = async () => {
         const res = await fetch(
