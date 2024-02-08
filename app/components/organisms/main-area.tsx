@@ -2,18 +2,17 @@
 
 // 都道府県の一覧、グラフを表示する用のコンポーネント
 
-import styles from './main-area.module.css'
+import styles from './main-area.module.css';
 
-import { useEffect, useRef, useState } from "react";
+import { GraphValue, Prefecture } from '@/app/type/resas-api-type';
 import { useRouter } from 'next/navigation';
-import SelectBox from "../molecules/selectbox";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import PrefecturesTitleArea from '../molecules/prefectures-title-area';
+import SelectBox from "../molecules/selectbox";
 import MainGraphArea from './main-graph-area';
-import { Prefecture, GraphValue } from '@/app/type/resas-api-type';
 
-import * as Highcharts from 'highcharts';
 import { initOption, replaceGraphTitle } from '@/app/utils/graph-options';
+import * as Highcharts from 'highcharts';
 import SelectType from '../atoms/select-type';
 import Title from '../atoms/title';
 
@@ -152,7 +151,7 @@ export default function MainArea() {
         <div className={styles.mainHeaderArea}>
           <PrefecturesTitleArea />
           <div className={styles.selectTypebox}>
-            <Title size="titleSm">グラフ種別：</Title>
+            <Title size="sm">グラフ種別：</Title>
             <SelectType onChange={(e) => onChangeGraphType(e)} />
           </div>
         </div>

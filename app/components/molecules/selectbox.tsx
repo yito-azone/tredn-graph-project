@@ -15,7 +15,7 @@ export default function SelectBox({
   return (
     <div className={styles.selectbox}>
       <CheckBox checked={checked} />
-      <Title size="titleSm">{children}</Title>
+      <Title size="sm">{children}</Title>
     </div>
   );
 }
