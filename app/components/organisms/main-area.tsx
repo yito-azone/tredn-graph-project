@@ -40,7 +40,7 @@ export default function MainArea() {
       (item) => item.prefName === prefecture.prefName
     );
     if (!selectedPrefecture) throw Error("都道府県が見つかりません");
-    selectedPrefecture.checked = !selectedPrefecture.checked
+    selectedPrefecture.checked = !selectedPrefecture.checked;
     setPrefectures(newPrefectures);
 
     // チェックボックスに入力した値がtrueならグラフ用データを追加、falseなら削除
@@ -92,12 +92,12 @@ export default function MainArea() {
       getSelectPrefecture();
     } else {
       // 指定された都道府県のデータをグラフから削除
-      const value: GraphValue[] = graphValues;
-      const index = value.findIndex(
+      const values: GraphValue[] = graphValues;
+      const index = values.findIndex(
         (item) => item.prefCode === prefecture.prefCode
       );
-      value.splice(index, 1);
-      setGraphValues(value);
+      values.splice(index, 1);
+      setGraphValues(values);
 
       // グラフ表示用のオプション更新
       const newSeries = series;
