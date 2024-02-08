@@ -46,12 +46,9 @@ export default function MainArea() {
     // チェックボックスに入力した値がfalseなら削除
     if (!selectedPrefecture.checked) {
       // 指定された都道府県のデータをグラフから削除
-      const values: GraphValue[] = graphValues;
-      const index = values.findIndex(
-        (item) => item.prefCode === prefecture.prefCode
+      setGraphValues(
+        graphValues.filter((item) => item.prefCode !== prefecture.prefCode)
       );
-      values.splice(index, 1);
-      setGraphValues(values);
 
       // グラフ表示用のオプション更新
       const newSeries = series;
