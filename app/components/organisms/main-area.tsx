@@ -82,10 +82,10 @@ export default function MainArea() {
     setGraphValues(graphValues.concat(graphValue));
 
     const newSeries = series;
-    const seriesNumber: number[] = [];
-    graphValue.data
-      .find((val) => val.label === replaceGraphTitle(graphType))!
-      .data.forEach((item) => seriesNumber.push(item.value));
+    const seriesNumber: number[] =
+      graphValue.data
+        .find((val) => val.label === replaceGraphTitle(graphType))
+        ?.data.map((item) => item.value) ?? [];
 
     const item: Highcharts.SeriesOptionsType = {
       type: "line",
