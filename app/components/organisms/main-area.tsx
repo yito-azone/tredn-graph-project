@@ -81,7 +81,6 @@ export default function MainArea() {
     };
     setGraphValues(graphValues.concat(graphValue));
 
-    const newSeries = series;
     const seriesNumber: number[] =
       graphValue.data
         .find((val) => val.label === replaceGraphTitle(graphType))
@@ -93,7 +92,7 @@ export default function MainArea() {
       data: seriesNumber,
     };
 
-    newSeries.push(item);
+    const newSeries = series.concat(item);
     setSeries(newSeries);
 
     // グラフ表示用のオプション更新
