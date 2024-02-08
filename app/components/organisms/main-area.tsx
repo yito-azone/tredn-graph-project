@@ -4,7 +4,7 @@
 
 import styles from "./main-area.module.css";
 
-import { GraphValue, Prefecture } from "@/app/type/resas-api-type";
+import { GraphData, GraphValue, Prefecture } from "@/app/type/resas-api-type";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import PrefecturesTitleArea from "../molecules/prefectures-title-area";
@@ -30,8 +30,18 @@ export default function MainArea() {
   // 初期描画からグラフを外す
   const [isCheckedPrefecture, setIsCheckedPrefecture] = useState(false);
 
+  const fetchSelectPrefecture = async (prefCode: number) => {
+    const res = await fetch(`/api/select-prefecture?prefCode=${prefCode}`);
+    try {
+      const jsonData = await res.json();
+      return jsonData.data.data as GraphData[];
+    } catch (e) {
+      throw Error("データの取得に失敗しました");
+    }
+  };
+
   // チェックボックスがクリックされた際に都道府県の引数に渡された種類のグラフ表示のための値を取得
-  const onClickCheckBox = (prefecture: Prefecture, graphType: string) => {
+  const onClickCheckBox = async (prefecture: Prefecture, graphType: string) => {
     // useState内のchecked状態を更新
     const newPrefectures: Prefecture[] = prefectures.map((prefecture) => ({
       ...prefecture,
@@ -63,50 +73,42 @@ export default function MainArea() {
 
     // チェックボックスに入力した値がtrueならグラフ用データを追加
     // 指定された都道府県のグラフ表示用データ取得
-    const fetchSelectPrefecture = async () => {
-      const res = await fetch(
-        `/api/select-prefecture?prefCode=${prefecture.prefCode}`
-      );
-      const jsonData = await res.json();
-      const values: GraphValue[] = graphValues;
-      const result: GraphValue = {
-        prefCode: prefecture.prefCode,
-        prefName: prefecture.prefName,
-        data: jsonData.data.data,
-      };
-      values.push(result);
-      setGraphValues(values);
-
-      const newSeries = series;
-      const seriesNumber: number[] = [];
-      result.data
-        .find((val) => val.label === replaceGraphTitle(graphType))!
-        .data.map((item) => seriesNumber.push(item.value));
-
-      const item: Highcharts.SeriesOptionsType = {
-        type: "line",
-        name: prefecture.prefName,
-        data: seriesNumber,
-      };
-
-      newSeries.push(item);
-      setSeries(newSeries);
-
-      // グラフ表示用のオプション更新
-      const newOptions = options;
-      if (newOptions) {
-        newOptions.title!.text = replaceGraphTitle(graphType);
-        newOptions.series = newSeries;
-      }
-      setOptions(newOptions);
-
-      // グラフ表示
-      if (!isCheckedPrefecture) {
-        setIsCheckedPrefecture(true);
-      }
-      router.refresh();
+    const graphDatas = await fetchSelectPrefecture(prefecture.prefCode);
+    const graphValue: GraphValue = {
+      prefCode: prefecture.prefCode,
+      prefName: prefecture.prefName,
+      data: graphDatas,
     };
-    fetchSelectPrefecture();
+    setGraphValues(graphValues.concat(graphValue));
+
+    const newSeries = series;
+    const seriesNumber: number[] = [];
+    graphValue.data
+      .find((val) => val.label === replaceGraphTitle(graphType))!
+      .data.map((item) => seriesNumber.push(item.value));
+
+    const item: Highcharts.SeriesOptionsType = {
+      type: "line",
+      name: prefecture.prefName,
+      data: seriesNumber,
+    };
+
+    newSeries.push(item);
+    setSeries(newSeries);
+
+    // グラフ表示用のオプション更新
+    const newOptions = options;
+    if (newOptions) {
+      newOptions.title!.text = replaceGraphTitle(graphType);
+      newOptions.series = newSeries;
+    }
+    setOptions(newOptions);
+
+    // グラフ表示
+    if (!isCheckedPrefecture) {
+      setIsCheckedPrefecture(true);
+    }
+    router.refresh();
   };
 
   // 表示グラフの種別変更
