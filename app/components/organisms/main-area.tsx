@@ -145,7 +145,7 @@ export default function MainArea() {
       const res = await fetch("/api/prefectures");
       const result = await res.json();
       if (!result) return;
-      result.data.map((item: Prefecture) => {
+      result.data.forEach((item: Prefecture) => {
         item.checked = false;
       });
       setPrefectures(result.data);
