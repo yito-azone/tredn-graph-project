@@ -24,7 +24,7 @@ export default function MainArea() {
   const [graphType, setGraphType] = useState<string>('population');
   // グラフ表示用の値を格納
   const [options, setOptions] = useState<Highcharts.Options>(initOption);
-  const [graphValue, setGraphValue] = useState<GraphValue[]>([]);
+  const [graphValues, setGraphValues] = useState<GraphValue[]>([]);
   const [series, setSeries] = useState<Highcharts.SeriesOptionsType[]>([]);
 
   // 初期描画からグラフを外す
@@ -45,14 +45,14 @@ export default function MainArea() {
       const getSelectPrefecture = async () => {
         const res = await fetch(`/api/select-prefecture?prefCode=${prefecture.prefCode}`)
         const jsonData = await res.json();
-        const values: GraphValue[] = graphValue;
+        const values: GraphValue[] = graphValues;
         const result: GraphValue = {
           prefCode: prefecture.prefCode,
           prefName: prefecture.prefName,
           data: jsonData.data.data
         }
         values.push(result);
-        setGraphValue(values)
+        setGraphValues(values)
 
         const newSeries = series;
         const seriesNumber: number[] = []
@@ -85,10 +85,10 @@ export default function MainArea() {
 
     } else {
       // 指定された都道府県のデータをグラフから削除
-      const value: GraphValue[] = graphValue;
+      const value: GraphValue[] = graphValues;
       const index = value.findIndex(item => item.prefCode === prefecture.prefCode)
       value.splice(index, 1);
-      setGraphValue(value)
+      setGraphValues(value)
 
       // グラフ表示用のオプション更新
       const newSeries = series;
@@ -112,7 +112,7 @@ export default function MainArea() {
     newOptions.series = []
 
     // 選択された種別のオプションで書き換え
-    graphValue.map(value => {
+    graphValues.map(value => {
       const seriesNumber: number[] = []
       value.data.find((val) => val.label === replaceGraphTitle(e.target.value))!.data.map(item => seriesNumber.push(item.value))
       newOptions.title!.text = replaceGraphTitle(e.target.value);
