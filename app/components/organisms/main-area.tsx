@@ -117,11 +117,12 @@ export default function MainArea() {
     newOptions.series = [];
 
     // 選択された種別のオプションで書き換え
-    graphValues.map((value) => {
-      const seriesNumber: number[] = [];
-      value.data
-        .find((val) => val.label === replaceGraphTitle(e.target.value))!
-        .data.map((item) => seriesNumber.push(item.value));
+    graphValues.forEach((value) => {
+      const seriesNumber: number[] =
+        value.data
+          .find((val) => val.label === replaceGraphTitle(e.target.value))
+          ?.data.map((item) => item.value) ?? [];
+
       newOptions.title!.text = replaceGraphTitle(e.target.value);
       newOptions.series!.push({
         type: "line",
