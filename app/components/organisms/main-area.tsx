@@ -85,7 +85,7 @@ export default function MainArea() {
     const seriesNumber: number[] = [];
     graphValue.data
       .find((val) => val.label === replaceGraphTitle(graphType))!
-      .data.map((item) => seriesNumber.push(item.value));
+      .data.forEach((item) => seriesNumber.push(item.value));
 
     const item: Highcharts.SeriesOptionsType = {
       type: "line",
