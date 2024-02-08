@@ -5,7 +5,7 @@ import { graphTypes } from '@/app/utils/graph-options';
 export default function SelectType({
   onChange
 }: {
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
+  readonly onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }) {
   return (
     <select onChange={e => onChange(e)}>
